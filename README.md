@@ -1,2 +1,2 @@
 # jumpa
-temukan tempat jumpa terintegrasi AI
+temukan tempat jumpa dengan AI
