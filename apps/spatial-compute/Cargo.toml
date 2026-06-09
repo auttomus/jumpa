@@ -1,0 +1,8 @@
+[package]
+name = "spatial-compute"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+core-grpc = { version = "0.1.0", path = "../../libs/core-grpc" }
+geom-median = { version = "0.1.0", path = "../../libs/geom-median" }

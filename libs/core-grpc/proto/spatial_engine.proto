@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package jumpa.spatial;
+
+service SpatialEngine {
+  rpc CalculateOptimalCoordinate (SpatialEquationRequest) returns (SpatialEquationResponse) {}
+}
+
+enum ConstraintPriority {
+  SOFT = 0;
+  HARD = 1;
+}
+
+enum GeometryType {
+  POINT = 0;
+  LINESTRING = 1;
+  POLYGON = 2;
+}
+
+message AgnosticAnchor {
+  string id = 1;
+  GeometryType geom_type = 2;
+  bytes ewkb_geometry = 3;
+  float weight = 4;
+  optional double max_radius_meters = 5;
+  ConstraintPriority priority = 6;
+}
+
+message SpatialEquationRequest {
+  string routing_mode = 1;
+  repeated AgnosticAnchor anchors = 2;
+}
+
+message SpatialEquationResponse {
+  double resolved_longitude = 1;
+  double resolved_latitude = 2;
+  bool constraint_violation_flag = 3;
+  string execution_metadata = 4;
+}

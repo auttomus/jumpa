@@ -1,0 +1,8 @@
+[package]
+name = "gateway-api"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+core-db = { version = "0.1.0", path = "../../libs/core-db" }
+core-grpc = { version = "0.1.0", path = "../../libs/core-grpc" }
