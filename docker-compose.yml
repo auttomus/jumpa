@@ -1,8 +1,9 @@
 services:
   nginx:
     image: nginx:alpine
+    restart: always
     ports:
-      - "${HTTP_PORT:-80}:80"
+      - "${HTTP_PORT:-8080}:80"
       - "${HTTPS_PORT:-443}:443"
     volumes:
       - ./infra/edge-routing/nginx.conf:/etc/nginx/nginx.conf:ro
@@ -24,41 +25,52 @@ services:
       - nginx
 
   web-app:
-    image: oven/bun:latest
+    image: node:22-slim
     working_dir: /app
     volumes:
       - ./apps/web-app:/app
-    command: "bun run dev"
+      - /app/node_modules
+    command: sh -c "npm install && npm run dev"
     environment:
       - PUBLIC_API_URL=${PUBLIC_API_URL:-http://localhost/api}
     ports:
       - "${ASTRO_PORT:-4321}:4321"
 
   gateway-api:
-    image: rust:1.85-slim
+    image: rust:1.88-slim
     working_dir: /app
     volumes:
       - .:/app
-    command: "cargo run -p gateway-api"
+      - cargo-cache:/usr/local/cargo/registry
+      - gateway-target:/root/target
+    command: sh -c "apt-get update && apt-get install -y protobuf-compiler && cargo run -p gateway-api"
     environment:
+      - CARGO_TARGET_DIR=/root/target
       - DATABASE_URL=postgres://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@postgres:5432/${DB_NAME:-jumpa}
       - SCYLLA_URI=${SCYLLA_URI:-scylladb:9042}
       - REDIS_URL=${REDIS_URL:-redis://redis:6379}
       - SPATIAL_ENGINE_URL=${SPATIAL_ENGINE_URL:-http://spatial-compute:50051}
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4317}
     depends_on:
-      - postgres
-      - scylladb
-      - redis
-      - spatial-compute
+      postgres:
+        condition: service_healthy
+      scylladb:
+        condition: service_started
+      redis:
+        condition: service_started
+      spatial-compute:
+        condition: service_started
 
   spatial-compute:
-    image: rust:1.85-slim
+    image: rust:1.88-slim
     working_dir: /app
     volumes:
       - .:/app
-    command: "cargo run -p spatial-compute"
+      - cargo-cache:/usr/local/cargo/registry
+      - spatial-target:/root/target
+    command: sh -c "apt-get update && apt-get install -y protobuf-compiler && cargo run -p spatial-compute"
     environment:
+      - CARGO_TARGET_DIR=/root/target
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4317}
 
   postgres:
@@ -71,6 +83,11 @@ services:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ${DB_NAME:-jumpa}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   scylladb:
     image: scylladb/scylla:latest
@@ -99,12 +116,14 @@ services:
 
   martin:
     image: maplibre/martin
+    restart: always
     environment:
       - DATABASE_URL=postgres://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@postgres:5432/${DB_NAME:-jumpa}
     ports:
       - "${MARTIN_PORT:-3000}:3000"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
   otel-collector:
     image: otel/opentelemetry-collector:latest
@@ -144,3 +163,6 @@ volumes:
   scylla-data:
   minio-data:
   tempo-data:
+  cargo-cache:
+  gateway-target:
+  spatial-target:

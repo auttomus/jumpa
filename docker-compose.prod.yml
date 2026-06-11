@@ -1,0 +1,114 @@
+services:
+  nginx:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    volumes:
+      - ./infra/edge-routing/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./infra/edge-routing/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - web-app
+      - gateway-api
+      - martin
+      - otel-collector
+
+  web-app:
+    image: ${WEB_APP_IMAGE:-jumpa-web-app:latest}
+    restart: always
+    environment:
+      - PUBLIC_API_URL=${PUBLIC_API_URL}
+
+  gateway-api:
+    image: ${GATEWAY_API_IMAGE:-jumpa-gateway-api:latest}
+    restart: always
+    environment:
+      - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+      - SCYLLA_URI=scylladb:9042
+      - REDIS_URL=redis://redis:6379
+      - SPATIAL_ENGINE_URL=http://spatial-compute:50051
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+    depends_on:
+      - postgres
+      - scylladb
+      - redis
+      - spatial-compute
+
+  spatial-compute:
+    image: ${SPATIAL_COMPUTE_IMAGE:-jumpa-spatial-compute:latest}
+    restart: always
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+
+  postgres:
+    image: postgis/postgis:16-3.4-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  scylladb:
+    image: scylladb/scylla:latest
+    restart: always
+    command: ${SCYLLA_COMMAND:---smp 2 --memory 2G}
+    volumes:
+      - scylla-data:/var/lib/scylla
+
+  redis:
+    image: redis:alpine
+    restart: always
+
+  minio:
+    image: minio/minio:latest
+    restart: always
+    command: server /data --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+    volumes:
+      - minio-data:/data
+
+  martin:
+    image: maplibre/martin
+    restart: always
+    environment:
+      - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+    depends_on:
+      - postgres
+
+  otel-collector:
+    image: otel/opentelemetry-collector:latest
+    restart: always
+    volumes:
+      - ./infra/observability/otel-config.yaml:/etc/otelcol/config.yaml:ro
+    depends_on:
+      - tempo
+
+  tempo:
+    image: grafana/tempo:latest
+    restart: always
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./infra/observability/tempo.yaml:/etc/tempo.yaml:ro
+      - tempo-data:/var/tempo
+
+  grafana:
+    image: grafana/grafana:latest
+    restart: always
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
+    volumes:
+      - ./infra/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+    depends_on:
+      - tempo
+
+volumes:
+  postgres-data:
+  scylla-data:
+  minio-data:
+  tempo-data:
