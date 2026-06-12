@@ -7,12 +7,12 @@
     selectVenue,
     startSession,
     updateSessionStatus
-  } from '../../store/mapStore';
-  import type { Venue } from '../../types';
-  import AppBadge from './control/AppBadge.svelte';
-  import SessionTracker from './control/SessionTracker.svelte';
-  import VenuePanel from './control/VenuePanel.svelte';
-  import ChatFAB from './control/ChatFAB.svelte';
+  } from '@/store/mapStore';
+  import type { Venue } from '@/types';
+  import AppBadge from '@/features/core/AppBadge.svelte';
+  import SessionTracker from '@/features/session/SessionTracker.svelte';
+  import VenuePanel from '@/features/venue/VenuePanel.svelte';
+  import ChatFAB from '@/features/core/ChatFAB.svelte';
 
   function handleVenueClick(venue: Venue) {
     selectVenue(venue);
@@ -33,10 +33,10 @@
   }
 </script>
 
-<div class="overlay-container">
+<div class="absolute inset-0 z-20 pointer-events-none flex flex-col justify-between p-6">
   
   <!-- Top Bar: App Title and Status -->
-  <div class="top-bar">
+  <div class="flex justify-between items-center pointer-events-auto">
     <AppBadge />
     <SessionTracker
       session={$activeSession}
@@ -46,7 +46,7 @@
   </div>
 
   <!-- Bottom Area: Venue Browser & Chat FAB -->
-  <div class="bottom-area">
+  <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 w-full pointer-events-auto">
     <VenuePanel
       venuesList={$venues}
       selectedVenue={$selectedVenue}
@@ -57,38 +57,3 @@
     <ChatFAB isChatOpen={$isChatOpen} />
   </div>
 </div>
-
-<style>
-  .overlay-container {
-    position: absolute;
-    inset: 0;
-    z-index: 20;
-    pointer-events: none;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 24px;
-  }
-
-  .top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    pointer-events: auto;
-  }
-
-  .bottom-area {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    width: 100%;
-    pointer-events: auto;
-  }
-  @media (min-width: 768px) {
-    .bottom-area {
-      flex-direction: row;
-      align-items: flex-end;
-      justify-content: space-between;
-    }
-  }
-</style>

@@ -119,6 +119,9 @@ services:
     restart: always
     environment:
       - DATABASE_URL=postgres://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@postgres:5432/${DB_NAME:-jumpa}
+    volumes:
+      - ./infra/martin/data:/data
+    command: ["/data"]
     ports:
       - "${MARTIN_PORT:-3000}:3000"
     depends_on:

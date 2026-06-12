@@ -1,14 +1,14 @@
-/* Global Design System & Variables */
+@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
-:root {
-  --font-primary: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+@theme {
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   
   /* Color Palette */
-  --bg-space: #02040a;
-  --bg-slate-950: #0b0f19;
-  --bg-slate-900: #131a2c;
-  --bg-slate-800: #1e2942;
+  --color-bg-space: #02040a;
+  --color-bg-slate-950: #0b0f19;
+  --color-bg-slate-900: #131a2c;
+  --color-bg-slate-800: #1e2942;
   
   --color-cyan-300: #67e8f9;
   --color-cyan-400: #22d3ee;
@@ -20,9 +20,10 @@
   --color-red-400: #f87171;
   --color-red-500: #ef4444;
   
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  /* Text colors mapping */
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
   
   /* Effects */
   --border-glass: 1px solid rgba(255, 255, 255, 0.08);
@@ -32,31 +33,33 @@
   --shadow-glow: 0 0 25px rgba(6, 182, 212, 0.4);
 }
 
-/* Reset & Base Styles */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/* Base Styles Reset */
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-bg-space);
+    color: var(--color-text-primary);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
 }
 
-body {
-  font-family: var(--font-primary);
-  background-color: var(--bg-space);
-  color: var(--text-primary);
-  overflow: hidden;
-  height: 100vh;
-  width: 100vw;
-}
-
-/* Page Layout */
+/* Page Layout Wrapper */
 .app-container {
   position: relative;
   width: 100vw;
   height: 100vh;
-  background-color: var(--bg-space);
+  background-color: var(--color-bg-space);
 }
 
-/* Map Wrapper Viewport for Blackhole Transition */
+/* Map Viewport for Scale Transition */
 .map-viewport-wrapper {
   position: absolute;
   inset: 0;
@@ -70,7 +73,7 @@ body {
   overflow: hidden;
 }
 
-/* Cosmic Background revealed when map shrinks */
+/* Cosmic Background */
 .cosmic-backdrop {
   position: absolute;
   inset: 0;
@@ -91,8 +94,8 @@ body {
   opacity: 0.15;
 }
 
-/* Glassmorphism utility class */
-.glass-panel {
+/* Glassmorphism Panel Utility */
+@utility glass-panel {
   background: var(--bg-glass);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
@@ -100,7 +103,24 @@ body {
   box-shadow: var(--shadow-premium);
 }
 
-/* Custom Marker Styling */
+/* Custom Scrollbar Utility */
+@utility custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.12);
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(6, 182, 212, 0.4);
+  }
+}
+
+/* Custom Map Marker classes (instantiated in FullScreenMap.tsx JS) */
 .custom-marker {
   position: relative;
   display: flex;
@@ -172,7 +192,7 @@ body {
 
 .tooltip-content {
   background: rgba(2, 4, 10, 0.95);
-  border: 1px solid var(--bg-slate-800);
+  border: 1px solid var(--color-bg-slate-800);
   padding: 8px 12px;
   border-radius: 10px;
   font-size: 11px;
@@ -187,22 +207,21 @@ body {
   margin-bottom: 2px;
 }
 .tooltip-subtitle {
-  color: var(--text-secondary);
+  color: var(--color-text-secondary);
   font-size: 9px;
 }
 .tooltip-arrow {
   width: 8px;
   height: 8px;
   background: rgba(2, 4, 10, 0.95);
-  border-right: 1px solid var(--bg-slate-800);
-  border-bottom: 1px solid var(--bg-slate-800);
+  border-right: 1px solid var(--color-bg-slate-800);
+  border-bottom: 1px solid var(--color-bg-slate-800);
   transform: rotate(45deg) translateX(-50%) translateY(-5px);
   position: absolute;
   top: 100%;
   left: 50%;
 }
 
-/* Animations */
 @keyframes pulse-ring {
   0% {
     transform: scale(0.8);
@@ -212,19 +231,4 @@ body {
     transform: scale(2.2);
     opacity: 0;
   }
-}
-
-/* Custom Scrollbar */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.12);
-  border-radius: 10px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(6, 182, 212, 0.4);
 }

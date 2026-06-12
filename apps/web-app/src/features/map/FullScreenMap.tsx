@@ -4,7 +4,7 @@ import { useStore } from '@nanostores/react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Feature, LineString } from 'geojson';
-import type { Venue } from '../../types';
+import type { Venue } from '@/types';
 import {
   mapCenter,
   mapZoom,
@@ -12,7 +12,7 @@ import {
   selectedVenue,
   activeSession,
   selectVenue,
-} from '../../store/mapStore';
+} from '@/store/mapStore';
 
 export default function FullScreenMap() {
   const mapContainerRef = useRef<HTMLDivElement>(null);

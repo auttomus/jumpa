@@ -3,6 +3,7 @@ import node from '@astrojs/node';
 import react from '@astrojs/react';
 import solid from '@astrojs/solid-js';
 import svelte from '@astrojs/svelte';
+import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
@@ -20,6 +21,7 @@ export default defineConfig({
     port: 4321
   },
   vite: {
+    plugins: [tailwindcss()],
     server: {
       allowedHosts: ['web-app', 'localhost', '127.0.0.1']
     }

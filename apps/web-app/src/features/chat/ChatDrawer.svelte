@@ -3,12 +3,12 @@
     isChatOpen, 
     blackholeOrigin, 
     activeSession
-  } from '../../store/mapStore';
-  import type { ChatMessage } from '../../types';
-  import ChatHeader from './chat/ChatHeader.svelte';
-  import SessionCard from './chat/SessionCard.svelte';
-  import MessageFeed from './chat/MessageFeed.svelte';
-  import ChatInput from './chat/ChatInput.svelte';
+  } from '@/store/mapStore';
+  import type { ChatMessage } from '@/types';
+  import ChatHeader from '@/features/chat/ChatHeader.svelte';
+  import SessionCard from '@/features/chat/SessionCard.svelte';
+  import MessageFeed from '@/features/chat/MessageFeed.svelte';
+  import ChatInput from '@/features/chat/ChatInput.svelte';
 
   let chatContainerEl: HTMLDivElement;
 
@@ -19,10 +19,8 @@
   ];
   let newMessageText = '';
 
-  // Reactively apply compositor transitions when chat visibility changes
   $: applyBlackholeEffect($isChatOpen);
 
-  // Sync active session message reactively
   $: if ($activeSession) {
     const systemText = `New Jumpa session started: "${$activeSession.name}"`;
     if (!messages.some(m => m.text === systemText)) {
@@ -79,10 +77,10 @@
   }
 </script>
 
-<div bind:this={chatContainerEl} class="drawer-wrapper">
+<div bind:this={chatContainerEl} class="fixed inset-0 z-30 pointer-events-none flex items-center justify-end p-6">
   <!-- Floating Glassmorphic Chat Panel -->
   <div
-    class="chat-panel"
+    class="pointer-events-auto flex flex-col w-full max-w-[400px] h-[calc(100vh-48px)] rounded-[40px] border border-white/8 bg-white/3 backdrop-blur-3xl p-6 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.05)] transition-all duration-500 ease-out"
     style="
       transform: {$isChatOpen ? 'scale(1)' : 'scale(0)'};
       opacity: {$isChatOpen ? '1' : '0'};
@@ -95,34 +93,3 @@
     <ChatInput bind:value={newMessageText} onSend={sendMessage} />
   </div>
 </div>
-
-<style>
-  .drawer-wrapper {
-    position: fixed;
-    inset: 0;
-    z-index: 30;
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 24px;
-  }
-
-  .chat-panel {
-    pointer-events: auto;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 400px;
-    height: calc(100vh - 48px);
-    border-radius: 40px;
-    border: var(--border-glass);
-    background: var(--bg-glass);
-    backdrop-filter: blur(24px) saturate(180%);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
-    padding: 24px;
-    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.05);
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
-                opacity 0.4s ease-out;
-  }
-</style>
