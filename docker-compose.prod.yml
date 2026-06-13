@@ -77,6 +77,9 @@ services:
     restart: always
     environment:
       - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+    volumes:
+      - ./infra/martin/data:/data
+    command: ["/data"]
     depends_on:
       - postgres
 

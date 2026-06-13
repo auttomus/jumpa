@@ -29,11 +29,86 @@ export default function FullScreenMap() {
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
-    const styleUrl = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
+    const mapStyle = {
+      version: 8,
+      sources: {
+        protomaps: {
+          type: 'vector',
+          url: '/tiles/indonesia'
+        }
+      },
+      glyphs: 'https://fonts.openmaptiles.org/{fontstack}/{range}.pbf',
+      layers: [
+        {
+          id: 'background',
+          type: 'background',
+          paint: {
+            'background-color': '#02040a'
+          }
+        },
+        {
+          id: 'earth',
+          type: 'fill',
+          source: 'protomaps',
+          'source-layer': 'earth',
+          paint: {
+            'fill-color': '#0b0f19'
+          }
+        },
+        {
+          id: 'water',
+          type: 'fill',
+          source: 'protomaps',
+          'source-layer': 'water',
+          paint: {
+            'fill-color': '#082f49'
+          }
+        },
+        {
+          id: 'landuse',
+          type: 'fill',
+          source: 'protomaps',
+          'source-layer': 'landuse',
+          paint: {
+            'fill-color': '#111827'
+          }
+        },
+        {
+          id: 'roads-casing',
+          type: 'line',
+          source: 'protomaps',
+          'source-layer': 'roads',
+          paint: {
+            'line-color': '#1f2937',
+            'line-width': 1.5
+          }
+        },
+        {
+          id: 'roads',
+          type: 'line',
+          source: 'protomaps',
+          'source-layer': 'roads',
+          paint: {
+            'line-color': '#374151',
+            'line-width': 1
+          }
+        },
+        {
+          id: 'buildings',
+          type: 'fill',
+          source: 'protomaps',
+          'source-layer': 'buildings',
+          paint: {
+            'fill-color': '#1f2937',
+            'fill-opacity': 0.6
+          }
+        }
+      ]
+    };
 
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
-      style: styleUrl,
+      style: mapStyle as any,
       center: [...center],
       zoom: zoom,
       pitch: 45,
