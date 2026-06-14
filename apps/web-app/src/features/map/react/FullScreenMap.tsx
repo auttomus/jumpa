@@ -12,6 +12,8 @@ import {
   selectedVenue,
   activeSession,
   selectVenue,
+  mapTheme,
+  setMapTheme,
 } from '@/store/mapStore';
 import type { Venue } from '@/types';
 import { getMapStyle } from './mapStyle';
@@ -56,14 +58,27 @@ export default function FullScreenMap() {
   const venueList = useStore(venues);
   const currentSelectedVenue = useStore(selectedVenue);
   const currentActiveSession = useStore(activeSession);
+  const currentThemeMode = useStore(mapTheme);
+
+  // Expose setMapTheme to window for easy debugging/control in console
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as any).setMapTheme = setMapTheme;
+    }
+  }, []);
 
   // 1. Initialize Map instance
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
-    // Get current hour of the user for adaptive theme rendering
-    const currentHour = new Date().getHours();
-    const style = getMapStyle(window.location.origin, currentHour);
+    // Get theme mode initial state
+    const currentMode = mapTheme.get();
+    let initialHour = new Date().getHours();
+    if (currentMode === 'night') initialHour = 23;
+    else if (currentMode === 'day') initialHour = 12;
+    else if (currentMode === 'sunset') initialHour = 18;
+
+    const style = getMapStyle(window.location.origin, initialHour);
 
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
@@ -200,6 +215,9 @@ export default function FullScreenMap() {
         }
       };
 
+      const primary500 = typeof window !== 'undefined' ? window.getComputedStyle(document.documentElement).getPropertyValue('--primary-500').trim() || '#22c55e' : '#22c55e';
+      const primary400 = typeof window !== 'undefined' ? window.getComputedStyle(document.documentElement).getPropertyValue('--primary-400').trim() || '#4ade80' : '#4ade80';
+
       if (map.getSource(sourceId)) {
         (map.getSource(sourceId) as maplibregl.GeoJSONSource).setData(geojson);
       } else {
@@ -212,7 +230,7 @@ export default function FullScreenMap() {
           source: sourceId,
           layout: { 'line-join': 'round', 'line-cap': 'round' },
           paint: {
-            'line-color': '#06b6d4',
+            'line-color': primary400,
             'line-width': 8,
             'line-opacity': 0.3
           }
@@ -225,7 +243,7 @@ export default function FullScreenMap() {
           source: sourceId,
           layout: { 'line-join': 'round', 'line-cap': 'round' },
           paint: {
-            'line-color': '#22d3ee',
+            'line-color': primary500,
             'line-width': 4,
             'line-opacity': 0.95
           }
@@ -250,8 +268,30 @@ export default function FullScreenMap() {
     }
   }, [currentActiveSession, center]);
 
+  // 5. Dynamic theme switcher logic (hot-swaps styles seamlessly)
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    let hour = new Date().getHours();
+    if (currentThemeMode === 'night') hour = 23;
+    else if (currentThemeMode === 'day') hour = 12;
+    else if (currentThemeMode === 'sunset') hour = 18;
+
+    const style = getMapStyle(window.location.origin, hour);
+    
+    // Check if style is loaded before modifying
+    if (map.isStyleLoaded()) {
+      map.setStyle(style as any, { diff: true });
+    } else {
+      map.once('style.load', () => {
+        map.setStyle(style as any, { diff: true });
+      });
+    }
+  }, [currentThemeMode]);
+
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', backgroundColor: '#02040a', overflow: 'hidden' }}>
+    <div style={{ position: 'relative', width: '100%', height: '100%', backgroundColor: 'var(--bg-space)', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', boxShadow: 'inset 0 0 100px rgba(0,0,0,0.8)', zIndex: 10 }}></div>
       <div ref={mapContainerRef} style={{ width: '100%', height: '100%' }} />
     </div>

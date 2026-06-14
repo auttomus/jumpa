@@ -1,36 +1,206 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
+:root {
+  /* Primary Green (Emerald-inspired) Palette */
+  --primary-50: #f0fdf4;
+  --primary-100: #dcfce7;
+  --primary-200: #bbf7d0;
+  --primary-300: #86efac;
+  --primary-400: #4ade80;
+  --primary-500: #22c55e;
+  --primary-600: #16a34a;
+  --primary-700: #15803d;
+  --primary-800: #166534;
+  --primary-900: #14532d;
+
+  /* UI Colors - Default Light Theme */
+  --bg-space: #f8fafc;
+  --bg-slate-950: #ffffff;
+  --bg-slate-900: #f1f5f9;
+  --bg-slate-800: #e2e8f0;
+  
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  
+  --border-glass: 1px solid rgba(15, 23, 42, 0.08);
+  --bg-glass: rgba(255, 255, 255, 0.75);
+  --bg-glass-hover: rgba(241, 245, 249, 0.85);
+  --shadow-premium: 0 20px 50px rgba(15, 23, 42, 0.08);
+  --shadow-glow: 0 0 25px rgba(34, 197, 94, 0.35);
+
+  /* CONSTANT MAP BASE COLORS (Playful, Clean Light Palette) */
+  --map-background: #f8fafc;
+  --map-earth: #ffffff;
+  --map-water: #bae6fd; /* Soft, playful water blue */
+  --map-landuse: #f1f5f9;
+  --map-roads: #ffffff;
+  --map-roads-casing: #e2e8f0;
+  --map-buildings: #e2e8f0;
+  --map-buildings-opacity: 0.85;
+
+  /* Map Shading / Lighting (Day) */
+  --map-light-color: #ffffff;
+  --map-light-intensity: 0.85;
+  --map-light-pos-r: 1.15;
+  --map-light-pos-a: 135;
+  --map-light-pos-p: 30;
+
+  /* Map Sky/Atmosphere (Day) */
+  --map-sky-color: #bae6fd;
+  --map-horizon-color: #ffffff;
+  --map-sky-horizon-blend: 0.6;
+  --map-horizon-fog-blend: 0.5;
+  --map-fog-color: #bae6fd;
+  --map-fog-ground-blend: 0.5;
+  --map-atmosphere-blend: 0.8;
+}
+
+/* Night theme overrides */
+:root[data-theme="night"] {
+  --bg-space: #02040a;
+  --bg-slate-950: #0b0f19;
+  --bg-slate-900: #131a2c;
+  --bg-slate-800: #1e2942;
+  
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  
+  --border-glass: 1px solid rgba(255, 255, 255, 0.08);
+  --bg-glass: rgba(11, 15, 25, 0.75);
+  --bg-glass-hover: rgba(19, 26, 44, 0.85);
+  --shadow-premium: 0 20px 50px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 25px rgba(34, 197, 94, 0.4);
+
+  /* Map Shading / Lighting (Night - Cool Moonlight) */
+  --map-light-color: #a5f3fc;
+  --map-light-intensity: 0.4;
+  --map-light-pos-r: 1.15;
+  --map-light-pos-a: 210;
+  --map-light-pos-p: 30;
+
+  /* Map Sky/Atmosphere (Night - Deep Cosmic Space) */
+  --map-sky-color: #02040a;
+  --map-horizon-color: #0b0f19;
+  --map-sky-horizon-blend: 0.5;
+  --map-horizon-fog-blend: 0.3;
+  --map-fog-color: #0b0f19;
+  --map-fog-ground-blend: 0.3;
+  --map-atmosphere-blend: 0.6;
+}
+
+/* Sunset theme overrides */
+:root[data-theme="sunset"] {
+  --bg-space: #121020;
+  --bg-slate-950: #1a182e;
+  --bg-slate-900: #23203f;
+  --bg-slate-800: #2d2a50;
+  
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  
+  --border-glass: 1px solid rgba(255, 255, 255, 0.08);
+  --bg-glass: rgba(26, 24, 46, 0.75);
+  --bg-glass-hover: rgba(35, 32, 63, 0.85);
+  --shadow-premium: 0 20px 50px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 25px rgba(34, 197, 94, 0.4);
+
+  /* Map Shading / Lighting (Sunset - Soft Cozy Gold/Peach) */
+  --map-light-color: #ffe4d6; /* Soft peach/cream gold instead of harsh orange */
+  --map-light-intensity: 0.75;
+  --map-light-pos-r: 1.5;
+  --map-light-pos-a: 250;
+  --map-light-pos-p: 65;
+
+  /* Map Sky/Atmosphere (Sunset - Cozy Twilight Purple & Soft Gold) */
+  --map-sky-color: #2e1a47; /* Dusky warm purple */
+  --map-horizon-color: #ffdcd0; /* Soft warm gold glow */
+  --map-sky-horizon-blend: 0.7;
+  --map-horizon-fog-blend: 0.5;
+  --map-fog-color: #ffdcd0;
+  --map-fog-ground-blend: 0.5;
+  --map-atmosphere-blend: 0.9;
+}
+
+/* Sunrise theme overrides */
+:root[data-theme="sunrise"] {
+  --bg-space: #0c0a1c;
+  --bg-slate-950: #131124;
+  --bg-slate-900: #18152e;
+  --bg-slate-800: #272147;
+  
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  
+  --border-glass: 1px solid rgba(255, 255, 255, 0.08);
+  --bg-glass: rgba(19, 17, 36, 0.75);
+  --bg-glass-hover: rgba(24, 21, 46, 0.85);
+  --shadow-premium: 0 20px 50px rgba(0, 0, 0, 0.65);
+  --shadow-glow: 0 0 25px rgba(34, 197, 94, 0.4);
+
+  /* Map Shading / Lighting (Sunrise - Rose Gold) */
+  --map-light-color: #fda4af;
+  --map-light-intensity: 0.75;
+  --map-light-pos-r: 1.5;
+  --map-light-pos-a: 70;
+  --map-light-pos-p: 75;
+
+  /* Map Sky/Atmosphere (Sunrise - Soft Violet) */
+  --map-sky-color: #0c0a1c;
+  --map-horizon-color: #a855f7;
+  --map-sky-horizon-blend: 0.75;
+  --map-horizon-fog-blend: 0.5;
+  --map-fog-color: #a855f7;
+  --map-fog-ground-blend: 0.5;
+  --map-atmosphere-blend: 0.9;
+}
+
 @theme {
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   
-  /* Color Palette */
-  --color-bg-space: #02040a;
-  --color-bg-slate-950: #0b0f19;
-  --color-bg-slate-900: #131a2c;
-  --color-bg-slate-800: #1e2942;
+  /* Color Palette mappings to CSS Variables */
+  --color-bg-space: var(--bg-space);
+  --color-bg-slate-950: var(--bg-slate-950);
+  --color-bg-slate-900: var(--bg-slate-900);
+  --color-bg-slate-800: var(--bg-slate-800);
   
-  --color-cyan-300: #67e8f9;
-  --color-cyan-400: #22d3ee;
-  --color-cyan-500: #06b6d4;
-  --color-cyan-600: #0891b2;
+  --color-primary-50: var(--primary-50);
+  --color-primary-100: var(--primary-100);
+  --color-primary-200: var(--primary-200);
+  --color-primary-300: var(--primary-300);
+  --color-primary-400: var(--primary-400);
+  --color-primary-500: var(--primary-500);
+  --color-primary-600: var(--primary-600);
+  --color-primary-700: var(--primary-700);
+  --color-primary-800: var(--primary-800);
+  --color-primary-900: var(--primary-900);
+
+  /* Backward compatibility for cyan styles */
+  --color-cyan-300: var(--primary-300);
+  --color-cyan-400: var(--primary-400);
+  --color-cyan-500: var(--primary-500);
+  --color-cyan-600: var(--primary-600);
   
-  --color-emerald-500: #10b981;
+  --color-emerald-500: var(--primary-500);
   --color-yellow-500: #eab308;
   --color-red-400: #f87171;
   --color-red-500: #ef4444;
   
   /* Text colors mapping */
-  --color-text-primary: #f8fafc;
-  --color-text-secondary: #94a3b8;
-  --color-text-muted: #64748b;
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
   
   /* Effects */
-  --border-glass: 1px solid rgba(255, 255, 255, 0.08);
-  --bg-glass: rgba(11, 15, 25, 0.75);
-  --bg-glass-hover: rgba(19, 26, 44, 0.85);
-  --shadow-premium: 0 20px 50px rgba(0, 0, 0, 0.7);
-  --shadow-glow: 0 0 25px rgba(6, 182, 212, 0.4);
+  --border-glass: var(--border-glass);
+  --bg-glass: var(--bg-glass);
+  --bg-glass-hover: var(--bg-glass-hover);
+  --shadow-premium: var(--shadow-premium);
+  --shadow-glow: var(--shadow-glow);
 }
 
 /* Base Styles Reset */

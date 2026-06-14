@@ -11,6 +11,29 @@ export const activeSession = atom<JumpaSession | null>(null);
 // Selected venue / active marker
 export const selectedVenue = atom<Venue | null>(null);
 
+// Map theme mode: auto (time-based), day, night, sunset
+export type MapThemeMode = 'auto' | 'day' | 'night' | 'sunset';
+export const mapTheme = atom<MapThemeMode>('auto');
+
+export function setMapTheme(mode: MapThemeMode) {
+  mapTheme.set(mode);
+}
+
+// Synchronize mapTheme state with HTML root element data-theme attribute
+if (typeof document !== 'undefined') {
+  mapTheme.subscribe((theme) => {
+    let activeTheme = theme;
+    if (theme === 'auto') {
+      const hour = new Date().getHours();
+      if (hour >= 20 || hour < 5) activeTheme = 'night';
+      else if (hour >= 5 && hour < 8) activeTheme = 'sunrise';
+      else if (hour >= 8 && hour < 17) activeTheme = 'day';
+      else activeTheme = 'sunset';
+    }
+    document.documentElement.setAttribute('data-theme', activeTheme);
+  });
+}
+
 // Sample venues around Jakarta
 export const venues = atom<readonly Venue[]>([
   {

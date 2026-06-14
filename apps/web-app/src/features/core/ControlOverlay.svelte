@@ -10,6 +10,7 @@
   } from '@/store/mapStore';
   import type { Venue } from '@/types';
   import AppBadge from '@/features/core/AppBadge.svelte';
+  import ThemeToggle from '@/features/core/ThemeToggle.svelte';
   import SessionTracker from '@/features/session/SessionTracker.svelte';
   import VenuePanel from '@/features/venue/VenuePanel.svelte';
   import ChatFAB from '@/features/core/ChatFAB.svelte';
@@ -37,7 +38,10 @@
   
   <!-- Top Bar: App Title and Status -->
   <div class="flex justify-between items-center pointer-events-auto">
-    <AppBadge />
+    <div class="flex items-center gap-2">
+      <AppBadge />
+      <ThemeToggle />
+    </div>
     <SessionTracker
       session={$activeSession}
       onGoEnRoute={handleGoEnRoute}

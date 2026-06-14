@@ -1,95 +1,110 @@
 ---
-import FullScreenMap from '@/features/map/react/FullScreenMap';
-import ControlOverlay from '@/features/core/ControlOverlay.svelte';
-import ChatDrawer from '@/features/chat/ChatDrawer.svelte';
-import '../index.css';
+import FullScreenMap from "@/features/map/react/FullScreenMap";
+import ControlOverlay from "@/features/core/ControlOverlay.svelte";
+import ChatDrawer from "@/features/chat/ChatDrawer.svelte";
+import "../index.css";
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Jumpa - Premium Spatial Matching</title>
-		<meta name="description" content="Wayland-grade fluid spatial matching application using high-performance WebGL maps." />
-		<script is:inline>
-			window.addEventListener('error', (event) => {
-				const div = document.createElement('div');
-				div.style.position = 'fixed';
-				div.style.bottom = '10px';
-				div.style.left = '10px';
-				div.style.right = '10px';
-				div.style.padding = '15px';
-				div.style.background = '#ef4444';
-				div.style.color = 'white';
-				div.style.zIndex = '99999';
-				div.style.fontFamily = 'monospace';
-				div.style.whiteSpace = 'pre-wrap';
-				div.style.borderRadius = '8px';
-				div.style.boxShadow = '0 10px 25px rgba(0,0,0,0.5)';
-				div.innerText = 'Browser Error:\n' + (event.error ? event.error.stack : event.message);
-				document.body.appendChild(div);
-			});
-			window.addEventListener('unhandledrejection', (event) => {
-				const div = document.createElement('div');
-				div.style.position = 'fixed';
-				div.style.bottom = '10px';
-				div.style.left = '10px';
-				div.style.right = '10px';
-				div.style.padding = '15px';
-				div.style.background = '#f97316';
-				div.style.color = 'white';
-				div.style.zIndex = '99999';
-				div.style.fontFamily = 'monospace';
-				div.style.whiteSpace = 'pre-wrap';
-				div.style.borderRadius = '8px';
-				div.style.boxShadow = '0 10px 25px rgba(0,0,0,0.5)';
-				div.innerText = 'Unhandled Rejection:\n' + (event.reason ? event.reason.stack || event.reason : event);
-				document.body.appendChild(div);
-			});
-			// Override console.error to print Astro hydration errors or import failures
-			const originalConsoleError = console.error;
-			console.error = function(...args) {
-				originalConsoleError.apply(console, args);
-				const div = document.createElement('div');
-				div.style.position = 'fixed';
-				div.style.bottom = '120px';
-				div.style.left = '10px';
-				div.style.right = '10px';
-				div.style.padding = '15px';
-				div.style.background = '#dc2626';
-				div.style.color = 'white';
-				div.style.zIndex = '99999';
-				div.style.fontFamily = 'monospace';
-				div.style.whiteSpace = 'pre-wrap';
-				div.style.borderRadius = '8px';
-				div.style.boxShadow = '0 10px 25px rgba(0,0,0,0.5)';
-				div.innerText = 'Console Error:\n' + args.map(arg => {
-					if (arg instanceof Error) return arg.stack;
-					if (typeof arg === 'object') {
-						try { return JSON.stringify(arg); } catch(e) { return String(arg); }
-					}
-					return String(arg);
-				}).join(' ');
-				document.body.appendChild(div);
-			};
-		</script>
-	</head>
-	<body>
-		<div class="app-container">
-			<!-- Cosmic backdrop is revealed during the blackhole transition scale-down -->
-			<div class="cosmic-backdrop"></div>
-			
-			<!-- Viewport wrapper for map -->
-			<div id="map-viewport" class="map-viewport-wrapper">
-				<FullScreenMap client:only="react" />
-			</div>
-			
-			<!-- Svelte UI layers -->
-			<ControlOverlay client:only="svelte" />
-			<ChatDrawer client:only="svelte" />
-		</div>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Jumpa - Premium Spatial Matching</title>
+    <meta
+      name="description"
+      content="Wayland-grade fluid spatial matching application using high-performance WebGL maps."
+    />
+    <script is:inline>
+      window.addEventListener("error", (event) => {
+        const div = document.createElement("div");
+        div.style.position = "fixed";
+        div.style.bottom = "10px";
+        div.style.left = "10px";
+        div.style.right = "10px";
+        div.style.padding = "15px";
+        div.style.background = "#ef4444";
+        div.style.color = "white";
+        div.style.zIndex = "99999";
+        div.style.fontFamily = "monospace";
+        div.style.whiteSpace = "pre-wrap";
+        div.style.borderRadius = "8px";
+        div.style.boxShadow = "0 10px 25px rgba(0,0,0,0.5)";
+        div.innerText =
+          "Browser Error:\n" +
+          (event.error ? event.error.stack : event.message);
+        document.body.appendChild(div);
+      });
+      window.addEventListener("unhandledrejection", (event) => {
+        const div = document.createElement("div");
+        div.style.position = "fixed";
+        div.style.bottom = "10px";
+        div.style.left = "10px";
+        div.style.right = "10px";
+        div.style.padding = "15px";
+        div.style.background = "#f97316";
+        div.style.color = "white";
+        div.style.zIndex = "99999";
+        div.style.fontFamily = "monospace";
+        div.style.whiteSpace = "pre-wrap";
+        div.style.borderRadius = "8px";
+        div.style.boxShadow = "0 10px 25px rgba(0,0,0,0.5)";
+        div.innerText =
+          "Unhandled Rejection:\n" +
+          (event.reason ? event.reason.stack || event.reason : event);
+        document.body.appendChild(div);
+      });
+      // Override console.error to print Astro hydration errors or import failures
+      const originalConsoleError = console.error;
+      console.error = function (...args) {
+        originalConsoleError.apply(console, args);
+        const div = document.createElement("div");
+        div.style.position = "fixed";
+        div.style.bottom = "120px";
+        div.style.left = "10px";
+        div.style.right = "10px";
+        div.style.padding = "15px";
+        div.style.background = "#dc2626";
+        div.style.color = "white";
+        div.style.zIndex = "99999";
+        div.style.fontFamily = "monospace";
+        div.style.whiteSpace = "pre-wrap";
+        div.style.borderRadius = "8px";
+        div.style.boxShadow = "0 10px 25px rgba(0,0,0,0.5)";
+        div.innerText =
+          "Console Error:\n" +
+          args
+            .map((arg) => {
+              if (arg instanceof Error) return arg.stack;
+              if (typeof arg === "object") {
+                try {
+                  return JSON.stringify(arg);
+                } catch (e) {
+                  return String(arg);
+                }
+              }
+              return String(arg);
+            })
+            .join(" ");
+        document.body.appendChild(div);
+      };
+    </script>
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Cosmic backdrop is revealed during the blackhole transition scale-down -->
+      <div class="cosmic-backdrop"></div>
+
+      <!-- Viewport wrapper for map -->
+      <div id="map-viewport" class="map-viewport-wrapper">
+        <FullScreenMap client:only="react" />
+      </div>
+
+      <!-- Svelte UI layers (temporarily disabled) -->
+      <!-- <ControlOverlay client:only="svelte" /> -->
+      <!-- <ChatDrawer client:only="svelte" /> -->
+    </div>
+  </body>
 </html>
